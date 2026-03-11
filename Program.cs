@@ -309,7 +309,7 @@ namespace RPG_Lab_Project
 
             Loot reward = new Loot("Ancient chest", 150);
 
-            Console.WriteLine("Starting RPG battle simulation...");
+            Console.WriteLine("Starting RPG battle simulation with updated balance...");
             Console.WriteLine("Possible reward: " + reward);
 
             Console.WriteLine("\n=== Characters ===");
