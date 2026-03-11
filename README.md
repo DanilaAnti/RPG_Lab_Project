@@ -9,3 +9,7 @@
 
 Проект собирается в Visual Studio как Console App (.NET Framework 4.8).
 
+\## Git workflow
+
+Разработка проекта велась с использованием веток main, develop и feature/\*.
+
