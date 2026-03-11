@@ -34,6 +34,12 @@ namespace RPG_Lab_Project
 
         public Loot(string name, int value)
         {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Loot name cannot be empty.");
+
+            if (value < 0)
+                throw new ArgumentOutOfRangeException("value", "Loot value cannot be negative.");
+
             Name = name;
             Value = value;
         }
@@ -81,6 +87,21 @@ namespace RPG_Lab_Project
 
         protected Character(string name, int hp, int mana, int dmg, CharacterClass type, Random r)
         {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Character name cannot be empty.");
+
+            if (hp <= 0)
+                throw new ArgumentOutOfRangeException("hp", "Health must be greater than zero.");
+
+            if (mana < 0)
+                throw new ArgumentOutOfRangeException("mana", "Mana cannot be negative.");
+
+            if (dmg < 0)
+                throw new ArgumentOutOfRangeException("dmg", "Damage cannot be negative.");
+
+            if (r == null)
+                throw new ArgumentNullException("r", "Random generator cannot be null.");
+
             Id = idCounter++;
             Name = name;
             Health = hp;
@@ -97,12 +118,23 @@ namespace RPG_Lab_Project
                 throw new CharacterDeadException(Name + " already dead");
         }
 
+        protected void EnsureTarget(Character target)
+        {
+            if (target == null)
+                throw new ArgumentNullException("target", "Target cannot be null.");
+
+            target.EnsureAlive();
+        }
+
         public abstract void Attack(Character target);
         public abstract void UseSkill(Character target);
 
         public virtual void Defend(int damage)
         {
             EnsureAlive();
+
+            if (damage < 0)
+                throw new ArgumentOutOfRangeException("damage", "Damage cannot be negative.");
 
             if (Status == StatusEffect.Shielded)
             {
@@ -146,6 +178,8 @@ namespace RPG_Lab_Project
         public override void Attack(Character target)
         {
             EnsureAlive();
+            EnsureTarget(target);
+
             int dmg = Damage + rnd.Next(5);
             Console.WriteLine(Name + " strikes " + target.Name + " with sword.");
             target.Defend(dmg);
@@ -153,6 +187,9 @@ namespace RPG_Lab_Project
 
         public override void UseSkill(Character target)
         {
+            EnsureAlive();
+            EnsureTarget(target);
+
             if (Mana < 10)
             {
                 Console.WriteLine(Name + " lacks mana.");
@@ -171,6 +208,9 @@ namespace RPG_Lab_Project
 
         public override void Attack(Character target)
         {
+            EnsureAlive();
+            EnsureTarget(target);
+
             int dmg = Damage + rnd.Next(6);
             Console.WriteLine(Name + " casts magic bolt at " + target.Name + ".");
             target.Defend(dmg);
@@ -178,6 +218,9 @@ namespace RPG_Lab_Project
 
         public override void UseSkill(Character target)
         {
+            EnsureAlive();
+            EnsureTarget(target);
+
             if (Mana < 20)
             {
                 Console.WriteLine(Name + " lacks mana.");
@@ -196,6 +239,9 @@ namespace RPG_Lab_Project
 
         public override void Attack(Character target)
         {
+            EnsureAlive();
+            EnsureTarget(target);
+
             int dmg = Damage + rnd.Next(8);
             Console.WriteLine(Name + " shoots arrow at " + target.Name + ".");
             target.Defend(dmg);
@@ -203,6 +249,9 @@ namespace RPG_Lab_Project
 
         public override void UseSkill(Character target)
         {
+            EnsureAlive();
+            EnsureTarget(target);
+
             if (Mana < 15)
             {
                 Console.WriteLine(Name + " lacks mana.");
@@ -221,12 +270,23 @@ namespace RPG_Lab_Project
 
         public override void Attack(Character target)
         {
+            EnsureAlive();
+            EnsureTarget(target);
+
             Console.WriteLine(Name + " rams " + target.Name + ".");
             target.Defend(Damage + rnd.Next(4));
         }
 
         public override void UseSkill(Character target)
         {
+            EnsureAlive();
+
+            if (Mana < 5)
+            {
+                Console.WriteLine(Name + " lacks mana.");
+                return;
+            }
+
             Mana -= 5;
             Status = StatusEffect.Shielded;
             Console.WriteLine(Name + " raises shield!");
@@ -281,6 +341,10 @@ namespace RPG_Lab_Project
                 catch (CharacterDeadException e)
                 {
                     Console.WriteLine(e.Message);
+                }
+                catch (ArgumentException e)
+                {
+                    Console.WriteLine("Validation error: " + e.Message);
                 }
                 catch (Exception e)
                 {
