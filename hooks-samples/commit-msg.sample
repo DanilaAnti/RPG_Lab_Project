@@ -1,0 +1,11 @@
+#!/bin/sh
+
+MESSAGE_FILE=$1
+MESSAGE=$(cat "$MESSAGE_FILE")
+
+if [ -z "$MESSAGE" ]; then
+  echo "ERROR: empty commit message is not allowed."
+  exit 1
+fi
+
+exit 0

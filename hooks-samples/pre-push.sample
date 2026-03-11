@@ -1,0 +1,11 @@
+#!/bin/sh
+
+echo "Running build before push..."
+msbuild RPG_Lab_Project.csproj /p:Configuration=Debug
+
+if [ $? -ne 0 ]; then
+  echo "ERROR: build failed. Push rejected."
+  exit 1
+fi
+
+exit 0
