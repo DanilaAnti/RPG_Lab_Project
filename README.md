@@ -13,3 +13,5 @@
 
 Разработка проекта велась с использованием веток main, develop и feature/\*.
 
+Soft reset demonstration.
+
